@@ -1,0 +1,16 @@
+{
+  "name": "voomax-api",
+  "version": "1.0.2",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/index.js",
+    "start": "node src/index.js",
+    "build": "echo 'no build needed'"
+  },
+  "dependencies": {
+    "hono": "^4.4.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
