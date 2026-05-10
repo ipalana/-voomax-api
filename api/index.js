@@ -112,6 +112,12 @@ async function searchGoogleFlights({ origin, destination, date, returnDate, adul
 
   const data = await res.json();
 
+  // Log para debug
+  console.log("SerpAPI status:", data.search_metadata?.status);
+  console.log("Best flights:", data.best_flights?.length || 0);
+  console.log("Other flights:", data.other_flights?.length || 0);
+  if (data.error) console.log("SerpAPI error:", data.error);
+
   const allFlights = [
     ...(data.best_flights || []),
     ...(data.other_flights || []),
@@ -145,8 +151,8 @@ function normalizeGoogleFlight(flight, index) {
     airlineCode:  code,
     origin:       leg.departure_airport?.id || "",
     destination:  lastLeg.arrival_airport?.id || "",
-    departure:    (leg.departure_airport?.time || "").slice(11, 16) || (leg.departure_airport?.time || "").slice(0, 5) || "—",
-    arrival:      (lastLeg.arrival_airport?.time || "").slice(11, 16) || (lastLeg.arrival_airport?.time || "").slice(0, 5) || "—",
+    departure:    parseTime(leg.departure_airport?.time),
+    arrival:      parseTime(lastLeg.arrival_airport?.time),
     departureDate: date,
     duration,
     stops,
@@ -167,6 +173,14 @@ function normalizeGoogleFlight(flight, index) {
     cashback:     false,
     history:      [price],
   };
+}
+
+function parseTime(timeStr) {
+  if (!timeStr) return "—";
+  // SerpAPI returns "YYYY-MM-DD HH:MM" format
+  if (timeStr.includes(" ")) return timeStr.split(" ")[1];
+  // Fallback: already "HH:MM"
+  return timeStr.slice(0, 5);
 }
 
 function formatMinutes(mins) {
