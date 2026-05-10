@@ -1,5 +1,5 @@
 // api/index.js — Vercel Serverless Function
-// Stack:  SerpAPI (Google Flights) + Supabase
+// Stack: SerpAPI (Google Flights) + Supabase
 
 export default async function handler(req, res) {
   const url = new URL(req.url, "https://x");
@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   res.setHeader("Content-Type", "application/json");
-  
+
   if (req.method === "OPTIONS") { res.status(200).end(); return; }
 
   // ── Health ────────────────────────────────────────────────
@@ -124,10 +124,10 @@ async function searchGoogleFlights({ origin, destination, date, returnDate, adul
     ...(data.other_flights || []),
   ];
 
-  return allFlights.map((flight, i) => normalizeGoogleFlight(flight, i));
+  return allFlights.map((flight, i) => normalizeGoogleFlight(flight, i, date));
 }
 
-function normalizeGoogleFlight(flight, index) {
+function normalizeGoogleFlight(flight, index, date) {
   const leg     = flight.flights?.[0] || {};
   const lastLeg = flight.flights?.[flight.flights.length - 1] || leg;
   const airline = leg.airline || "—";
