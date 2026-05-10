@@ -9,16 +9,16 @@ const app = new Hono();
 
 // ─── CORS ────────────────────────────────────────────────────
 app.use("*", cors({
-  origin: [process.env.FRONTEND_URL || "http://localhost:5173"],
+  origin: "*",
   allowMethods: ["GET", "POST", "OPTIONS"],
 }));
 
 // ─── Health check ────────────────────────────────────────────
-app.get("/api/health", (c) => c.json({ ok: true, ts: new Date().toISOString() }));
+app.get("/health", (c) => c.json({ ok: true, ts: new Date().toISOString() }));
 
 // ─── POST /api/search ────────────────────────────────────────
 // Body: { origin, destination, departureDate, returnDate?, adults? }
-app.post("/api/search", async (c) => {
+app.post("/search", async (c) => {
   const body = await c.req.json();
   const { origin, destination, departureDate, returnDate, adults = 1 } = body;
 
@@ -58,7 +58,7 @@ app.post("/api/search", async (c) => {
 });
 
 // ─── GET /api/alerts ─────────────────────────────────────────
-app.get("/api/alerts", async (c) => {
+app.get("/alerts", async (c) => {
   const userId = c.req.query("user_id") || "anonymous";
   const res = await supabaseFetch(
     `price_alerts?user_id=eq.${userId}&order=created_at.desc`
@@ -68,7 +68,7 @@ app.get("/api/alerts", async (c) => {
 });
 
 // ─── POST /api/alerts ────────────────────────────────────────
-app.post("/api/alerts", async (c) => {
+app.post("/alerts", async (c) => {
   const body = await c.req.json();
   const { user_id = "anonymous", origin, destination, target_price } = body;
 
@@ -84,7 +84,7 @@ app.post("/api/alerts", async (c) => {
 });
 
 // ─── GET /api/prices/history ─────────────────────────────────
-app.get("/api/prices/history", async (c) => {
+app.get("/prices/history", async (c) => {
   const { origin, destination, days = "30" } = c.req.query();
   const since = new Date(Date.now() - Number(days) * 86400000).toISOString();
 
