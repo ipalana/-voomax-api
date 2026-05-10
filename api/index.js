@@ -1,5 +1,5 @@
 // api/index.js — Vercel Serverless Function
-// Stack: SerpAPI (Google Flights) + Supabase
+// Stack:  SerpAPI (Google Flights) + Supabase
 
 export default async function handler(req, res) {
   const url = new URL(req.url, "https://x");
